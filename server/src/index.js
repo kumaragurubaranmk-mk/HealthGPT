@@ -101,7 +101,17 @@ app.use('/api/timeline', timelineRoutes);
 app.use('/api/guardians', guardianRoutes);
 app.use('/api/sos', sosRoutes);
 
-// 404 Route Handler
+// Serve production static frontend if built
+const clientDistPath = path.resolve(__dirname, '../../client/dist');
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
+
+// 404 Route Handler for unmatched API routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({ error: `API endpoint '${req.originalUrl}' not found.` });
 });

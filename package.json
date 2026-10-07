@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "HealthGPT – Personal Health Assistant Full Stack Application",
   "scripts": {
+    "start": "npm --prefix server start",
+    "build": "npm --prefix server install && npm --prefix client install && npm --prefix client run build",
+    "build:client": "npm --prefix client run build",
     "init-db": "npm --prefix server run init-db",
     "server": "npm --prefix server start",
     "server:dev": "npm --prefix server run dev",
-    "client": "npm --prefix client run dev",
-    "build": "npm --prefix client run build"
+    "client": "npm --prefix client run dev"
   },
   "keywords": [
     "healthcare",

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: vitacare-ai-healthgpt
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ACTIVE_AI_PROVIDER
+        value: builtin
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_JWT_SECRET
+        generateValue: true
