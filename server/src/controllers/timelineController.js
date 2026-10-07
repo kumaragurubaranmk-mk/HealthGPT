@@ -1,0 +1,70 @@
+import { db } from '../database/db.js';
+import { v4 as uuidv4 } from 'uuid';
+
+export class TimelineController {
+  /**
+   * Get all chronological health timeline events for user
+   */
+  static getTimeline(req, res, next) {
+    try {
+      const events = db.prepare(`
+        SELECT * FROM medical_timeline 
+        WHERE user_id = ? 
+        ORDER BY event_date DESC, created_at DESC
+      `).all(req.user.id);
+
+      const parsed = events.map(e => ({
+        ...e,
+        metadata: e.metadata ? JSON.parse(e.metadata) : {}
+      }));
+
+      res.status(200).json({ timeline: parsed, totalEvents: parsed.length });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * Add a custom event to the timeline
+   */
+  static addEvent(req, res, next) {
+    try {
+      const {
+        event_type = 'custom_note',
+        title,
+        description = '',
+        event_date,
+        event_time = '',
+        icon_type = 'calendar',
+        status_badge = 'completed'
+      } = req.body;
+
+      if (!title || !event_date) {
+        return res.status(400).json({ error: 'Title and event date are required.' });
+      }
+
+      const id = uuidv4();
+      db.prepare(`
+        INSERT INTO medical_timeline (
+          id, user_id, event_type, title, description, event_date, event_time,
+          icon_type, status_badge
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        id,
+        req.user.id,
+        event_type,
+        title.trim(),
+        description.trim(),
+        event_date,
+        event_time,
+        icon_type,
+        status_badge
+      );
+
+      const event = db.prepare('SELECT * FROM medical_timeline WHERE id = ?').get(id);
+      res.status(201).json({ message: 'Timeline event recorded.', event });
+    } catch (err) {
+      next(err);
+    }
+  }
+}

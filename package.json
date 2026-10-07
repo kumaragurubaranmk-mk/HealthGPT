@@ -1,0 +1,21 @@
+{
+  "name": "healthgpt-app",
+  "version": "1.0.0",
+  "description": "HealthGPT – Personal Health Assistant Full Stack Application",
+  "scripts": {
+    "init-db": "npm --prefix server run init-db",
+    "server": "npm --prefix server start",
+    "server:dev": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build"
+  },
+  "keywords": [
+    "healthcare",
+    "ai",
+    "healthgpt",
+    "triage",
+    "symptom-checker"
+  ],
+  "author": "HealthGPT Project Team",
+  "license": "MIT"
+}
