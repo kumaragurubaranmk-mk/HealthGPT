@@ -6,7 +6,14 @@ const remoteUrl = process.argv[2];
 
 if (!remoteUrl) {
   console.log('Usage: node push_to_github.js <github-repo-url>');
-  console.log('Example: node push_to_github.js https://github.com/username/vitacare-ai.git');
+  console.log('Example: node push_to_github.js https://github.com/john-doe/vitacare-ai.git');
+  process.exit(1);
+}
+
+if (remoteUrl.includes('YOUR_USERNAME') || remoteUrl.includes('YOUR_REPO')) {
+  console.error('\n❌ Error: You passed the placeholder URL "YOUR_USERNAME/YOUR_REPO".');
+  console.log('👉 Please replace "YOUR_USERNAME" with your real GitHub username, and "YOUR_REPO" with your repository name!');
+  console.log('Example: node push_to_github.js https://github.com/myname/my-health-app.git\n');
   process.exit(1);
 }
 
