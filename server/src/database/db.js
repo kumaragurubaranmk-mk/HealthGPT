@@ -14,10 +14,24 @@ if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
+// Clean up any stale or foreign WAL / SHM shared memory files before connecting
+const shmPath = `${config.databasePath}-shm`;
+const walPath = `${config.databasePath}-wal`;
+if (fs.existsSync(shmPath)) {
+  try { fs.unlinkSync(shmPath); } catch (e) {}
+}
+if (fs.existsSync(walPath)) {
+  try { fs.unlinkSync(walPath); } catch (e) {}
+}
+
 export const db = new Database(config.databasePath);
 
-// Enable WAL mode for high concurrency & better performance
-db.pragma('journal_mode = WAL');
+// Enable WAL mode with graceful fallback to DELETE mode
+try {
+  db.pragma('journal_mode = WAL');
+} catch (e) {
+  try { db.pragma('journal_mode = DELETE'); } catch (e2) {}
+}
 db.pragma('foreign_keys = ON');
 
 function runMigrations() {

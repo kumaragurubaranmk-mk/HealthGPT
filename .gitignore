@@ -25,3 +25,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+
+# SQLite Shared Memory & WAL
+*.db-shm
+*.db-wal
